@@ -2,17 +2,22 @@ const createError = require('http-errors');
 const express = require('express');
 const path = require('path');
 const cookieParser = require('cookie-parser');
-const morgan = require('morgan'); 
-const cors = require('cors');
-const jwt = require('jsonwebtoken');
 const passport = require('passport');
-const LocalStrategy = require('passport-local').Strategy;
-
+const morgan = require('morgan'); 
+const session = require('express-session');
+const helmet = require('helmet');
+const flash = require('connect-flash');
+const cors = require('cors');
+require('dotenv').config();
 
 const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/users');
+//const usersRouter = require('./routes/api/users');
+const authRouter = require('./routes/api/auth');
 
+const connect = require('./schemas');
+const config = require('./config/config')
 const app = express();
+connect();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -22,21 +27,42 @@ app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
-app.use(cookieParser());
+app.use(cookieParser(process.env.COOKIE_SECRET));
+app.use(session({
+  resave: false,
+  saveUninitialized: false,
+  secret: 'keyboard cat',
+  cooke: {
+    httpOnly: true,
+    secure: false,
+  },
+}));
+
+app.use(flash());
+
+//app.set('jwt-secret', config.secret);
+
+require('./config/passport')(passport);
+app.use(passport.initialize());
+app.use(passport.session());
+app.use(helmet());
+
 app.use(cors());
 
 
 app.use('/', indexRouter);
-app.use('/users', usersRouter);
+app.use('/api/auth',authRouter);
+//app.use('/api/users', usersRouter);
+
+
 
 // catch 404 and forward to error handler
-// 브랜치 테스트
-app.use(function(req, res, next) {
+app.use((req, res, next) => {
   next(createError(404));
 });
 
 // error handler
-app.use(function(err, req, res, next) {
+app.use((err, req, res, next) => {
   // set locals, only providing error in development
   res.locals.message = err.message;
   res.locals.error = req.app.get('env') === 'development' ? err : {};
