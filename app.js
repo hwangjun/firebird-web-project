@@ -15,7 +15,6 @@ const indexRouter = require('./routes/index');
 const authRouter = require('./routes/api/auth');
 
 const connect = require('./schemas');
-const config = require('./config/config')
 const app = express();
 connect();
 

@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
-
+require('dotenv').config();
 
 /*
  *  /api/auth/login    post - email, password 
@@ -10,26 +10,30 @@ const jwt = require('jsonwebtoken');
  */
 
 //로그인
-router.post('/login', passport.authenticate('local-signin', { session: false }), (req, res) => {
-    const user = req.user;
-    if (user) {
-        const token = jwt.sign(req.user.toJSON(), 'jwt-secret', {
-            expiresIn: 604800 // 1 week
+router.post('/login', (req, res, next) => {
+    passport.authenticate('local-signin', (err, user, info) => {
+        if (err) { return next(err); }
+        if (!user) { return res.json({ success: "false", msg: 'User not found or Wrong password.' }); }
+        req.logIn(user, (err) => {
+            if (err) { return next(err); }
+            const token = jwt.sign(req.user.toJSON(), process.env.JWT_SECRET, {
+                expiresIn: 604800 // 1 week
+            });
+            return res.json({ success: "true", user, token: 'JWT ' + token, msg: 'Login Success.' });
         });
-        res.json({ success: true, user, token: 'JWT ' + token , msg : 'Login Success.'});
-    } else {
-        res.json({ success: false, msg: 'User not found or Wrong password.' });
-    }
+    })(req, res, next);
 });
 
 //회원가입
-router.post('/register', passport.authenticate('local-signup', { session: false }), (req, res) => {
-    const user = req.user;
-    if (user) {
-        res.json({ success: true, user, msg : 'Rigister Success.'});
-    } else {
-        res.status(401).send({ success: false, msg: 'Authentication failed. User not found.' });
-    }
+router.post('/register', (req, res, next) => {
+    passport.authenticate('local-signup', (err, user, info) => {
+        if (err) { return next(err); }
+        if (user) { //newUser 반환
+            return res.json({ success: "true", user, msg: 'User register Success.' });
+        } else { //false 반환
+            return res.json({ success: "false", "email": req.body.email, msg: 'User is found.' });
+        }
+    })(req, res, next);
 });
 
 module.exports = router;
