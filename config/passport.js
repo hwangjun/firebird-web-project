@@ -3,15 +3,15 @@ const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 const LocalStrategy = require('passport-local').Strategy; 
 const User = require('../models/UserModel'); 
-const jwt = require('jsonwebtoken');
-const jwtSecret = require('../config/jwtSecret');
+//const jwt = require('jsonwebtoken');
+//const jwtSecret = require('../config/jwtSecret');
 require('dotenv').config();
 
    
 module.exports = (passport) => { // index.js에서 넘겨준 passport입니다.
   let opts = {};
   opts.jwtFromRequest = ExtractJWT.fromAuthHeaderWithScheme('jwt');
-  opts.secretOrKey = jwtSecret.secret;
+  opts.secretOrKey = process.env.JWT_SECRET;
 
    passport.serializeUser((user, done) =>{ // req.session.passport.user에 세션에 저장하는 과정입니다.
       done(null, user.id); // deserializeUser에 값을 넘겨줍니다.
