@@ -15,7 +15,6 @@ const indexRouter = require('./routes/index');
 const authRouter = require('./routes/api/auth');
 
 const connect = require('./schemas');
-const config = require('./config/config')
 const app = express();
 connect();
 
@@ -31,7 +30,7 @@ app.use(cookieParser(process.env.COOKIE_SECRET));
 app.use(session({
   resave: false,
   saveUninitialized: false,
-  secret: 'keyboard cat',
+  secret: process.env.SESSION_SECRET,
   cooke: {
     httpOnly: true,
     secure: false,

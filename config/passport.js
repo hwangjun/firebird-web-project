@@ -3,15 +3,13 @@ const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 const LocalStrategy = require('passport-local').Strategy; 
 const User = require('../models/UserModel'); 
-const jwt = require('jsonwebtoken');
-const jwtSecret = require('../config/jwtSecret');
 require('dotenv').config();
 
    
 module.exports = (passport) => { // index.js에서 넘겨준 passport입니다.
   let opts = {};
   opts.jwtFromRequest = ExtractJWT.fromAuthHeaderWithScheme('jwt');
-  opts.secretOrKey = jwtSecret.secret;
+  opts.secretOrKey = process.env.JWT_SECRET;
 
    passport.serializeUser((user, done) =>{ // req.session.passport.user에 세션에 저장하는 과정입니다.
       done(null, user.id); // deserializeUser에 값을 넘겨줍니다.
@@ -31,7 +29,7 @@ module.exports = (passport) => { // index.js에서 넘겨준 passport입니다.
       User.findOne({'email': email}, (err, user) => { // 넘겨받은 email을 통해 검색합니다.
         if (err) return done(null);
         // flash를 통해서 메세지를 넘겨줍니다.   
-        if (user) return done(null, false, req.flash('signupMessage', '중복된 아이디입니다.'));
+        if (user) return done(null, false);
              
         const newUser = new User();
         newUser.email = email; // 넘겨받은 정보들을 세팅합니다.
@@ -55,15 +53,15 @@ module.exports = (passport) => { // index.js에서 넘겨준 passport입니다.
       try {
         if (err) return done(err);
         if (!user) { 
-            return done(null, false, req.flash('signinMessage', '아이디가 존재하지 않습니다.'));
+            //return done(null, false, req.flash('signinMessage', '아이디가 존재하지 않습니다.'));
+            return done(null, false);
         } else {  
           user.comparePassword(password, user.password, (err, isMatch) => {
             if (isMatch && !err) {
               return done(null, user);
             } else {
-              // return done(null);              
               // return done(err, false, req.flash('signinMessage', '아이디가 존재하지 않습니다.'));
-              return done(null, null, req.flash('signinMessage', '비밀번호가 틀렸어요'));
+              return done(null, false);
             }
           });
         }
