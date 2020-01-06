@@ -6,7 +6,7 @@ module.exports = () => {
             mongoose.set('debug', true);
         }
 
-        mongoose.connect(`mongodb+srv://USER_DEV:FireBird@cluster0-itsuu.gcp.mongodb.net/test?retryWrites=true&w=majority`, { useNewUrlParser: true }
+        mongoose.connect(`mongodb+srv://USER_DEV:FireBird@cluster0-itsuu.gcp.mongodb.net/FIREBIRD?retryWrites=true&w=majority`, { useNewUrlParser: true }
             , (error) => {
                 if (error) {
                     console.log('MongoDB Connection Error', error);
