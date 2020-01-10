@@ -9,14 +9,22 @@ const categorySchema = mongoose.Schema({
 });
 
 
-// Find All
+// Find All Category
 categorySchema.statics.findAll = function () {
   return this.find({});
 };
 
-// Find All
+// Find Category
 categorySchema.statics.findByCategoryCode = function (categoryCode) {
   return this.find({ categoryCode });
 };
+
+
+// insert Category
+categorySchema.statics.create = function (payload) {
+  const category = new this(payload);
+  return category.save();
+};
+
 
 module.exports = mongoose.model('Category', categorySchema, 'TB_CATEGORY');

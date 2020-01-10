@@ -1,7 +1,33 @@
 const router = require('express').Router();
 const Category = require('../../models/CategoryModel');
 
-// Find All Category
+/*
+options
+    enum: [cjung, gglee, etc..]
+
+
+responses
+    200:
+        description: 성공
+    403:
+        $ref: '#/components/res/Forbidden'
+    404:
+        $ref: '#/components/res/NotFound'
+    500:
+        $ref: '#/components/res/BadRequest'
+
+*/
+
+/**
+ * @swagger
+ * /api/category/:
+ *   get:
+ *     summary: 모든 카테고리 조회
+ *     tags: [Category]
+ *     responses:
+ *       200:
+ *         description: 성공
+ */
 router.get('/', (req, res) => {
     Category.findAll().then((category) => {
         if (!category.length) return res.status(404).send({ err: 'Category not found' });
@@ -11,7 +37,23 @@ router.get('/', (req, res) => {
     .catch(err => res.status(500).send(err));
 });
 
-// Find Category By categoryCode
+/**
+ * @swagger
+ * /api/category/{categoryCode}:
+ *   get:
+ *     summary: 특정 카테고리 조회
+ *     tags: [Category]
+ *     parameters:
+ *       - in: path
+ *         name: categoryCode
+ *         type: string
+ *         required: true
+ *         description: |
+ *          카테고리 코드
+ *     responses:
+ *       200:
+ *         description: 성공
+ */
 router.get('/:categoryCode', (req, res) => {
     Category.findByCategoryCode(req.params.categoryCode).then((category) => {
       if (!category) return res.status(404).send({ err: 'Category not found' });
@@ -20,5 +62,76 @@ router.get('/:categoryCode', (req, res) => {
     })
     .catch(err => res.status(500).send(err));
 });
+
+/**
+*    @swagger
+*    /api/category:
+*    post:
+*      summary: 카테고리 생성
+*      tags: [Category]
+*      consumes:
+*        - application/x-www-form-urlencoded
+*      parameters:
+*        - in: formData
+*          name: categoryCode
+*          type: string
+*          description: 카테고리 코드
+*        - in: formData
+*          name: parentCategoryCode
+*          type: string
+*          description: 부모 카테고리 코드
+*        - in: formData
+*          name: categoryName
+*          type: string
+*          description: 카레고리명
+*        - in: formData
+*          name: depth
+*          type: string
+*          description: 깊이
+*      responses:
+*        200:
+*          description: OK
+*/
+router.post('/', (req, res) => {
+    Category.create(req.body)
+        .then(category => res.send(category))
+        .catch(err => res.status(500).send(err));
+});
   
+
+/**
+*    @swagger
+*    /api/category:
+*    delete:
+*      summary: 카테고리 생성
+*      tags: [Category]
+*      consumes:
+*        - application/x-www-form-urlencoded
+*      parameters:
+*        - in: formData
+*          name: categoryCode
+*          type: string
+*          description: 카테고리 코드
+*        - in: formData
+*          name: parentCategoryCode
+*          type: string
+*          description: 부모 카테고리 코드
+*        - in: formData
+*          name: categoryName
+*          type: string
+*          description: 카레고리명
+*        - in: formData
+*          name: depth
+*          type: string
+*          description: 깊이
+*      responses:
+*        200:
+*          description: OK
+*/
+router.delete('/', (req, res) => {
+    Category.delete(req.body)
+        .then(category => res.send(category))
+        .catch(err => res.status(500).send(err));
+});
+
 module.exports = router;
