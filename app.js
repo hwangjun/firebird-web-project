@@ -13,6 +13,7 @@ require('dotenv').config();
 const indexRouter = require('./routes/index');
 //const usersRouter = require('./routes/api/users');
 const authRouter = require('./routes/api/auth');
+const prodRouter = require('./routes/api/prod');
 
 const connect = require('./schemas');
 const app = express();
@@ -51,6 +52,7 @@ app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/api/auth',authRouter);
+app.use('/prod', prodRouter);
 //app.use('/api/users', usersRouter);
 
 
