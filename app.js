@@ -8,7 +8,8 @@ const session = require('express-session');
 const helmet = require('helmet');
 const flash = require('connect-flash');
 const cors = require('cors');
-require('dotenv').config();
+//require('dotenv').config();
+const dotenv = require('dotenv');
 
 const indexRouter = require('./routes/index');
 //const usersRouter = require('./routes/api/users');
@@ -18,6 +19,29 @@ const prodRouter = require('./routes/api/prod');
 const connect = require('./schemas');
 const app = express();
 connect();
+
+/**
+ * NODE_ENV 설정
+ * windows : set NODE_ENV=local 확인: echo %NODE_ENV%
+ * linux(MAC) : export NODE_ENV=local 확인 : echo $NODE_ENV
+ */
+console.log('evn', process.env.NODE_ENV);
+let envPath = '';
+switch(process.env.NODE_ENV) {
+  case 'local':
+    envPath = './local.env';
+    break;
+  case 'dev':
+    envPath = './dev.env';
+    break;
+  case 'production':
+    envPath = './production.env';
+    break;
+  default: 
+    envPath = './local.env';
+}
+dotenv.config({path: envPath});
+console.log('load evn = ', process.env.ENV_VALUE);
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -52,7 +76,7 @@ app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/api/auth',authRouter);
-app.use('/prod', prodRouter);
+app.use('/products', prodRouter);
 //app.use('/api/users', usersRouter);
 
 
