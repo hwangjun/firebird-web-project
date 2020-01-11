@@ -9,7 +9,27 @@ require('dotenv').config();
  *  /api/auth/register post - email, password, name
  */
 
-//로그인
+
+ /**
+ * @swagger
+ * /message:
+ *   post:
+ *     summary: 사용자 요청별 메시지별 응답.
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: param
+ *         email: string
+ *         password: string
+ *     responses:
+ *       200:
+ *         description: 성공
+ *       403:
+ *         $ref: '#/components/res/Forbidden'
+ *       404:
+ *         $ref: '#/components/res/NotFound'
+ *       500:
+ *         $ref: '#/components/res/BadRequest'
+ */
 router.post('/login', (req, res, next) => {
     passport.authenticate('local-signin', (err, user, info) => {
         if (err) { return next(err); }

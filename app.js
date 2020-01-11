@@ -19,6 +19,7 @@ const prodRouter = require('./routes/api/prod');
 const connect = require('./schemas');
 const app = express();
 
+
 /**
  * NODE_ENV 설정
  * windows : set NODE_ENV=local 확인: echo %NODE_ENV%
@@ -39,7 +40,13 @@ switch(process.env.NODE_ENV) {
     envPath = './local.env';
 }
 dotenv.config({path: envPath});
-console.log('load evn = ', process.env.ENV_VALUE);
+
+// SWAGGER
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerOption = require('./config/swagger-jsdoc');
+const swaggerSpec = swaggerJSDoc(swaggerOption);
+const swaggerUi = require('swagger-ui-express');
+
 
 connect();
 
@@ -73,13 +80,18 @@ app.use(helmet());
 
 app.use(cors());
 
+//인터셉터 역할 부여   
+app.use(function (req, res, next) {
+  // next(createError(403));
+  next();
+});
 
+// ROUTERS
 app.use('/', indexRouter);
 app.use('/api/auth',authRouter);
 app.use('/products', prodRouter);
-//app.use('/api/users', usersRouter);
-
-
+app.use('/api/category', require('./routes/api/category'));
+app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
@@ -96,5 +108,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
 
 module.exports = app;
