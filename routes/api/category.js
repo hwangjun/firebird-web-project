@@ -103,7 +103,7 @@ router.post('/', (req, res) => {
 *    @swagger
 *    /api/category:
 *    delete:
-*      summary: 카테고리 생성
+*      summary: 카테고리 제거
 *      tags: [Category]
 *      consumes:
 *        - application/x-www-form-urlencoded
