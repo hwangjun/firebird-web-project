@@ -20,7 +20,7 @@ router.get('/:prod_c', check('prod_c').isNumeric(),(req, res) => {
         responseResult.desc = validationError.errors[0].msg + '[' + validationError.errors[0].param + ']';
     }
     if (400 != responseResult.state) {
-        Prod.getProd(req.params.prod_c)
+        Prod.getProduct(req.params.prod_c)
             .then((result) => {
                 responseResult.result = result;
             })

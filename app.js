@@ -18,14 +18,12 @@ const prodRouter = require('./routes/api/prod');
 
 const connect = require('./schemas');
 const app = express();
-connect();
 
 /**
  * NODE_ENV 설정
  * windows : set NODE_ENV=local 확인: echo %NODE_ENV%
  * linux(MAC) : export NODE_ENV=local 확인 : echo $NODE_ENV
  */
-console.log('evn', process.env.NODE_ENV);
 let envPath = '';
 switch(process.env.NODE_ENV) {
   case 'local':
@@ -42,6 +40,8 @@ switch(process.env.NODE_ENV) {
 }
 dotenv.config({path: envPath});
 console.log('load evn = ', process.env.ENV_VALUE);
+
+connect();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
