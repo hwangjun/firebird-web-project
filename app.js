@@ -40,6 +40,7 @@ switch(process.env.NODE_ENV) {
     envPath = './local.env';
 }
 dotenv.config({path: envPath});
+console.log(`path ${envPath}`)
 
 // SWAGGER
 const swaggerJSDoc = require('swagger-jsdoc');
