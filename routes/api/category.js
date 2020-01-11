@@ -112,24 +112,12 @@ router.post('/', (req, res) => {
 *          name: categoryCode
 *          type: string
 *          description: 카테고리 코드
-*        - in: formData
-*          name: parentCategoryCode
-*          type: string
-*          description: 부모 카테고리 코드
-*        - in: formData
-*          name: categoryName
-*          type: string
-*          description: 카레고리명
-*        - in: formData
-*          name: depth
-*          type: string
-*          description: 깊이
 *      responses:
 *        200:
 *          description: OK
 */
 router.delete('/', (req, res) => {
-    Category.delete(req.body)
+    Category.delete(req.body.categoryCode)
         .then(category => res.send(category))
         .catch(err => res.status(500).send(err));
 });

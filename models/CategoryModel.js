@@ -26,5 +26,9 @@ categorySchema.statics.create = function (payload) {
   return category.save();
 };
 
+// delete Category
+categorySchema.statics.delete = function (categoryCode) {
+  return this.remove({ categoryCode });
+};
 
 module.exports = mongoose.model('Category', categorySchema, 'TB_CATEGORY');
