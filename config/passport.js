@@ -3,6 +3,7 @@ const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 const LocalStrategy = require('passport-local').Strategy; 
 const User = require('../models/UserModel'); 
+const mongoose = require('mongoose');
 require('dotenv').config();
 
    
@@ -75,8 +76,8 @@ module.exports = (passport) => { // index.js에서 넘겨준 passport입니다.
   passport.use('jwt', new JWTStrategy(
     opts, (jwt_payload, done) => {
       try {
-        User.findOne({
-            email: jwt_payload.email,
+        User.findById({
+            _id: mongoose.mongo.ObjectId(jwt_payload._id)
         }).then(user => {
           if (user) {
             console.log('user found in db in passport');
@@ -90,5 +91,9 @@ module.exports = (passport) => { // index.js에서 넘겨준 passport입니다.
         console.log(err);
         done(err);
       }
-    })); 
+    }));
+    
+    
+    
+    
 };  

@@ -12,7 +12,7 @@ const cors = require('cors');
 const dotenv = require('dotenv');
 
 const indexRouter = require('./routes/index');
-//const usersRouter = require('./routes/api/users');
+const usersRouter = require('./routes/api/users');
 const authRouter = require('./routes/api/auth');
 const prodRouter = require('./routes/api/prod');
 
@@ -89,9 +89,11 @@ app.use(function (req, res, next) {
 // ROUTERS
 app.use('/', indexRouter);
 app.use('/api/auth',authRouter);
+app.use('/api/users', usersRouter);
 app.use('/products', prodRouter);
 app.use('/api/category', require('./routes/api/category'));
 app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
+
 
 // catch 404 and forward to error handler
 app.use((req, res, next) => {
