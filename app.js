@@ -8,14 +8,46 @@ const session = require('express-session');
 const helmet = require('helmet');
 const flash = require('connect-flash');
 const cors = require('cors');
-require('dotenv').config();
+//require('dotenv').config();
+const dotenv = require('dotenv');
 
 const indexRouter = require('./routes/index');
 const usersRouter = require('./routes/api/users');
 const authRouter = require('./routes/api/auth');
+const prodRouter = require('./routes/api/prod');
 
 const connect = require('./schemas');
 const app = express();
+
+
+/**
+ * NODE_ENV 설정
+ * windows : set NODE_ENV=local 확인: echo %NODE_ENV%
+ * linux(MAC) : export NODE_ENV=local 확인 : echo $NODE_ENV
+ */
+let envPath = '';
+switch(process.env.NODE_ENV) {
+  case 'local':
+    envPath = './local.env';
+    break;
+  case 'dev':
+    envPath = './dev.env';
+    break;
+  case 'production':
+    envPath = './production.env';
+    break;
+  default: 
+    envPath = './local.env';
+}
+dotenv.config({path: envPath});
+
+// SWAGGER
+const swaggerJSDoc = require('swagger-jsdoc');
+const swaggerOption = require('./config/swagger-jsdoc');
+const swaggerSpec = swaggerJSDoc(swaggerOption);
+const swaggerUi = require('swagger-ui-express');
+
+
 connect();
 
 // view engine setup
@@ -48,11 +80,19 @@ app.use(helmet());
 
 app.use(cors());
 
+//인터셉터 역할 부여   
+app.use(function (req, res, next) {
+  // next(createError(403));
+  next();
+});
 
+// ROUTERS
 app.use('/', indexRouter);
 app.use('/api/auth',authRouter);
 app.use('/api/users', usersRouter);
-
+app.use('/products', prodRouter);
+app.use('/api/category', require('./routes/api/category'));
+app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
 // catch 404 and forward to error handler
@@ -70,5 +110,7 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.render('error');
 });
+
+
 
 module.exports = app;
