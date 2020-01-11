@@ -93,6 +93,9 @@ app.use('/api/auth',authRouter);
 app.use('/api/users', usersRouter);
 app.use('/products', prodRouter);
 app.use('/api/category', require('./routes/api/category'));
+app.use('/api/partner', require('./routes/api/partner'));
+
+// SWAGGER ROUTERS
 app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
@@ -111,7 +114,5 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.render('error');
 });
-
-
 
 module.exports = app;
