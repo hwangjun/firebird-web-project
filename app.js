@@ -11,7 +11,7 @@ const cors = require('cors');
 require('dotenv').config();
 
 const indexRouter = require('./routes/index');
-//const usersRouter = require('./routes/api/users');
+const usersRouter = require('./routes/api/users');
 const authRouter = require('./routes/api/auth');
 
 const connect = require('./schemas');
@@ -51,7 +51,7 @@ app.use(cors());
 
 app.use('/', indexRouter);
 app.use('/api/auth',authRouter);
-//app.use('/api/users', usersRouter);
+app.use('/api/users', usersRouter);
 
 
 
