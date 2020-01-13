@@ -146,7 +146,7 @@ router.post('/', [check('prod_c').isInt(), check('prod_n').isString()]
 *    @swagger
 *    /api/products:
 *    delete:
-*      summary: 상품 삭제
+*      summary: 상품 제거
 *      tags: [Product]
 *      consumes:
 *        - application/json
