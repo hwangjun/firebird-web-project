@@ -20,7 +20,7 @@ responses
 
 /**
  * @swagger
- * /api/category/:
+ * /api/categorys/:
  *   get:
  *     summary: 모든 카테고리 조회
  *     tags: [Category]
@@ -39,7 +39,7 @@ router.get('/', (req, res) => {
 
 /**
  * @swagger
- * /api/category/{categoryCode}:
+ * /api/categorys/{categoryCode}:
  *   get:
  *     summary: 특정 카테고리 조회
  *     tags: [Category]
@@ -65,7 +65,7 @@ router.get('/:categoryCode', (req, res) => {
 
 /**
 *    @swagger
-*    /api/category:
+*    /api/categorys:
 *    post:
 *      summary: 카테고리 생성
 *      tags: [Category]
@@ -101,7 +101,7 @@ router.post('/', (req, res) => {
 
 /**
 *    @swagger
-*    /api/category:
+*    /api/categorys:
 *    patch:
 *      summary: 카테고리 수정
 *      tags: [Category]
@@ -136,7 +136,7 @@ router.patch('/', (req, res) => {
 
 /**
 *    @swagger
-*    /api/category:
+*    /api/categorys:
 *    delete:
 *      summary: 카테고리 제거
 *      tags: [Category]

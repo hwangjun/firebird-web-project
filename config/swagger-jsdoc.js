@@ -34,9 +34,9 @@ module.exports = {
         in: 'header'
       },
     },
-    // security: [
-    //   { jwt: [] }
-    // ],
+    security: [
+      { jwt: [] }
+    ],
     contact: {
       email: "ajo1115@gmail.com"
     },

@@ -1,5 +1,7 @@
 const mongoose = require('mongoose');
 
+let _this;
+
 // 상품 스키마
 const prodSchema = mongoose.Schema({
     prod_c: {                           // 기준상품 코드
@@ -39,28 +41,29 @@ const prodSchema = mongoose.Schema({
 
 // Find All Product
 prodSchema.statics.findAll = (query, skip, limit) => {
-    return this.find(query).skip(skip).limit(limit);
+    return _this.find(query).skip(skip).limit(limit);
 }
 
 // Find Product
 prodSchema.statics.findByProductCode = (prod_c) => {
-    return this.find({ prod_c });
+    return _this.find({ prod_c });
 }
 
 // Insert Product
 prodSchema.statics.create = (prod) => {
-    const newProd = new this(prod);
+    const newProd = new _this(prod);
     return newProd.save();
 }
 
 // Update Category
 prodSchema.statics.update = (payload) => {
-    return this.updateOne({ prod_c: payload.prod_c }, { $set: payload });
+    return _this.updateOne({ prod_c: payload.prod_c }, { $set: payload });
 };
 
 // Delete Product
 prodSchema.statics.delete = (prod_c) => {
-    return  this.remove({ prod_c });
+    return _this.remove({ prod_c });
 }
 
-module.exports = mongoose.model('Prod', prodSchema, 'TB_PROD');
+_this = mongoose.model('Prod', prodSchema, 'TB_PROD');
+module.exports = _this;

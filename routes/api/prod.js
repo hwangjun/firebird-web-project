@@ -4,38 +4,14 @@ const {check, validationResult} = require('express-validator');
 const Prod = require('../../models/product/Product');
 
 /**
- * 상품 조회
- */
-router.get('/:prod_c', check('prod_c').isNumeric(),(req, res) => {
-    let responseResult = {
-        state: 200,
-        desc: '',
-        result: null
-    }
-
-    const validationError = validationResult(req);
-    // 유효성 검사 통과 못할 경우 false
-    if (false == validationError.isEmpty()) {
-        responseResult.state = 400;
-        responseResult.desc = validationError.errors[0].msg + '[' + validationError.errors[0].param + ']';
-    }
-    if (400 != responseResult.state) {
-        Prod.findByProductCode(req.params.prod_c)
-            .then((result) => {
-                responseResult.result = result;
-            })
-            .catch((err) => {
-                responseResult.result = err;
-                responseResult.state = 500;
-            })
-            .then(()=>{
-                res.status(responseResult.state).json(responseResult);
-            });
-    }
-});
-
-/**
- * 상품 리스트 조회
+ * @swagger
+ * /api/products/:
+ *   get:
+ *     summary: 모든 상품 조회
+ *     tags: [Product]
+ *     responses:
+ *       200:
+ *         description: 성공
  */
 router.get('/', (req, res) => {
     let responseResult = {
@@ -67,8 +43,70 @@ router.get('/', (req, res) => {
 });
 
 /**
- * 상품 추가
+ * @swagger
+ * /api/products/{prod_c}:
+ *   get:
+ *     summary: 특정 상품 조회
+ *     tags: [Product]
+ *     parameters:
+ *       - in: path
+ *         name: prod_c
+ *         type: integer
+ *         required: true
+ *         description: 상품코드
+ *     responses:
+ *       200:
+ *         description: 성공
  */
+router.get('/:prod_c', check('prod_c').isNumeric(),(req, res) => {
+    let responseResult = {
+        state: 200,
+        desc: '',
+        result: null
+    }
+
+    const validationError = validationResult(req);
+    // 유효성 검사 통과 못할 경우 false
+    if (false == validationError.isEmpty()) {
+        responseResult.state = 400;
+        responseResult.desc = validationError.errors[0].msg + '[' + validationError.errors[0].param + ']';
+    }
+    if (400 != responseResult.state) {
+        Prod.findByProductCode(req.params.prod_c)
+            .then((result) => {
+                responseResult.result = result;
+            })
+            .catch((err) => {
+                responseResult.result = err;
+                responseResult.state = 500;
+            })
+            .then(()=>{
+                res.status(responseResult.state).json(responseResult);
+            });
+    }
+});
+
+/**
+*    @swagger
+*    /api/products:
+*    post:
+*      summary: 상품 생성
+*      tags: [Product]
+*      consumes:
+*        - application/json
+*      parameters:
+*        - in: formData
+*          name: prod_c
+*          type: integer
+*          description: 상품코드
+*        - in: formData
+*          name: prod_n
+*          type: string
+*          description: 상품명
+*      responses:
+*        200:
+*          description: OK
+*/
 router.post('/', [check('prod_c').isInt(), check('prod_n').isString()]
             , (req, res, next) => {
     let responseResult = {
@@ -105,8 +143,22 @@ router.post('/', [check('prod_c').isInt(), check('prod_n').isString()]
 });
 
 /**
- * 상품 삭제
- */
+*    @swagger
+*    /api/products:
+*    delete:
+*      summary: 상품 삭제
+*      tags: [Product]
+*      consumes:
+*        - application/json
+*      parameters:
+*        - in: formData
+*          name: prod_c
+*          type: integer
+*          description: 상품코드
+*      responses:
+*        200:
+*          description: OK
+*/
 router.delete('/:prod_c', check('prod_c').isInt(), (req, res) => {
     let responseResult = {
         state: 200,

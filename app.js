@@ -10,12 +10,6 @@ const flash = require('connect-flash');
 const cors = require('cors');
 //require('dotenv').config();
 const dotenv = require('dotenv');
-
-const indexRouter = require('./routes/index');
-const usersRouter = require('./routes/api/users');
-const authRouter = require('./routes/api/auth');
-const prodRouter = require('./routes/api/prod');
-
 const connect = require('./schemas');
 const app = express();
 
@@ -79,12 +73,12 @@ app.use(helmet());
 app.use(cors());
 
 // ROUTERS
-app.use('/', indexRouter);
-app.use('/api/auth',authRouter);
-app.use('/api/users', usersRouter);
-app.use('/products', prodRouter);
-app.use('/api/category', require('./routes/api/category'));
-app.use('/api/partner', require('./routes/api/partner'));
+app.use('/', require('./routes/index'));
+app.use('/api/auth',require('./routes/api/auth'));
+app.use('/api/users', require('./routes/api/user'));
+app.use('/api/products', require('./routes/api/prod'));
+app.use('/api/categorys', require('./routes/api/category'));
+app.use('/api/partners', require('./routes/api/partner'));
 
 // SWAGGER ROUTERS
 app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec));

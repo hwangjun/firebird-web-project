@@ -4,24 +4,6 @@ const User = require('../../models/user/User');
 const authMiddleWare = require('../../config/authMiddleware');
 
 /*
- *  /api/users         GET
- *  /api/users/:email  GET       
- *  /api/users/        POST
- */
-
-//전체 회원 조회
-// router.get('/', (req, res, next) => {
-//     passport.authenticate('jwt', { session: false }, (err, user) => {
-//         const token = tokenConfig.getToken(req.headers);
-//         if (err) { return next(err); }
-//         if (token) { return res.json({ success: "true", user, msg: 'User is found.' }); }
-//         else { res.status(401).send({ success: "false", msg: 'Token is not valid' }) }
-//     })(req, res, next);
-// });
-
-
-
-/*
 options
     enum: [cjung, gglee, etc..]
 
@@ -48,21 +30,11 @@ responses
  *       200:
  *         description: 성공
  */
-router.get('/', (req, res)=> {
-    console.log('USER : ', User);
+router.get('/', authMiddleWare, (req, res) => {
     User.findAll().then((user) => {
-        console.log('dafasdf');
-        if (!user.length) return res.status(404).send({ err: 'User not found' });
-        res.send(user);
-    })
-        .catch(err => res.status(500).send(err));
-    // User.findAll().then((user) => {
-    //     console.log('dafasdf');
-    //     if (!user.length) return res.status(404).send({ err: 'User not found' });
-    //     res.send(user);
-    // })
-    //     .catch(err => res.status(500).send(err));
-    //res.json({ success: "true", info: req.decoded });
+        if (!user.length) return res.status(404).json({ err: 'User not found' });
+        res.json(user);
+    }).catch(err => res.status(500).json(err));
 });
 
 /**
@@ -83,11 +55,11 @@ router.get('/', (req, res)=> {
  *         description: 성공
  */
 router.get('/:email', authMiddleWare, (req, res) => {
-    User.findByCategoryCode(req.params.email).then((user) => {
-        if (!user) return res.status(404).send({ err: 'User not found' });
-        res.send(user);
+    User.findByUserEamil(req.params.email).then((user) => {
+        if (!user) return res.status(404).json({ err: 'User not found' });
+        res.json(user);
     })
-        .catch(err => res.status(500).send(err));
+        .catch(err => res.status(500).json(err));
 });
 
 /**
@@ -117,8 +89,8 @@ router.get('/:email', authMiddleWare, (req, res) => {
 */
 router.post('/', authMiddleWare, (req, res) => {
     User.create(req.body)
-        .then(user => res.send(user))
-        .catch(err => res.status(500).send(err));
+        .then(user => res.json(user))
+        .catch(err => res.status(500).json(err));
 });
 
 
@@ -149,8 +121,8 @@ router.post('/', authMiddleWare, (req, res) => {
 */
 router.patch('/', authMiddleWare, (req, res) => {
     User.update(req.body)
-        .then(user => res.send(user))
-        .catch(err => res.status(500).send(err));
+        .then(user => res.json(user))
+        .catch(err => res.status(500).json(err));
 });
 
 /**
@@ -172,8 +144,8 @@ router.patch('/', authMiddleWare, (req, res) => {
 */
 router.delete('/', authMiddleWare, (req, res) => {
     User.delete(req.body.email)
-        .then(user => res.send(user))
-        .catch(err => res.status(500).send(err));
+        .then(user => res.json(user))
+        .catch(err => res.status(500).json(err));
 });
 
 module.exports = router;

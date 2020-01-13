@@ -4,23 +4,23 @@ const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../../config/authMiddleware');
 
-/*
- *  /api/auth/login    POST - email, password 
- *  /api/auth/register POST - email, password, name
- *  /api/auth/check    GET  - token or header authorization(token)
- */
-
-
  /**
  * @swagger
- * /message:
+ * /api/auth/login:
  *   post:
- *     summary: 사용자 요청별 메시지별 응답.
+ *     summary: 로그인.
  *     tags: [Auth]
  *     parameters:
- *       - in: param
- *         email: string
- *         password: string
+ *       - in: formData
+ *         name: email
+ *         type: string
+ *         description: 이메일
+ *         required: true
+ *       - in: formData
+ *         name: password
+ *         type: string
+ *         description: 비밀번호
+ *         required: true
  *     responses:
  *       200:
  *         description: 성공
@@ -45,7 +45,38 @@ router.post('/login', (req, res, next) => {
     })(req, res, next);
 });
 
-//회원가입
+ /**
+ * @swagger
+ * /api/auth/register:
+ *   post:
+ *     summary: 회원가입.
+ *     tags: [Auth]
+ *     parameters:
+ *       - in: formData
+ *         name: email
+ *         type: string
+ *         description: 이메일
+ *         required: true
+ *       - in: formData
+ *         name: password
+ *         type: string
+ *         description: 비밀번호
+ *         required: true
+ *       - in: formData
+ *         name: name
+ *         type: string
+ *         description: 이름
+ *         required: true
+ *     responses:
+ *       200:
+ *         description: 성공
+ *       403:
+ *         $ref: '#/components/res/Forbidden'
+ *       404:
+ *         $ref: '#/components/res/NotFound'
+ *       500:
+ *         $ref: '#/components/res/BadRequest'
+ */
 router.post('/register', (req, res, next) => {
     passport.authenticate('local-signup', (err, user) => {
         if (err) { return next(err); }
@@ -57,8 +88,24 @@ router.post('/register', (req, res, next) => {
     })(req, res, next);
 });
 
-//JWT 검증을 통한 현재 계정상태 확인
+
 router.use('/check', authMiddleware);
+ /**
+ * @swagger
+ * /api/auth/check:
+ *   get:
+ *     summary: jwt 유효한지 확인
+ *     tags: [Auth]
+ *     responses:
+ *       200:
+ *         description: 성공
+ *       403:
+ *         $ref: '#/components/res/Forbidden'
+ *       404:
+ *         $ref: '#/components/res/NotFound'
+ *       500:
+ *         $ref: '#/components/res/BadRequest'
+ */
 router.get('/check', (req, res) => {
     res.json({ success: "true", info: req.decoded });
 });
