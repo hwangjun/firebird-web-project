@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {check, validationResult} = require('express-validator');
-const Prod = require('../../models/ProdModel');
+const Prod = require('../../models/ProductModel');
 
 /**
  * 상품 조회
