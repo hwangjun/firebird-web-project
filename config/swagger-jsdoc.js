@@ -75,17 +75,17 @@ module.exports = {
       }
     },
     schemes: ["http", "https"], // 가능한 통신 방식
-    definitions: { // 모델 정의 (Category 모델에서 사용되는 속성 정의)
-        'Category': {
-            type: 'object',
-            properties: {
-                categoryCode: { type: 'string' },
-                parentCategoryCode: { type: 'string' },
-                categoryName: { type: 'string' },
-                depth: { type: 'string' }
-            }
-        }
-    }
+    // definitions: { // 모델 정의 (Category 모델에서 사용되는 속성 정의)
+    //     'Category': {
+    //         type: 'object',
+    //         properties: {
+    //             categoryCode: { type: 'string' },
+    //             parentCategoryCode: { type: 'string' },
+    //             categoryName: { type: 'string' },
+    //             depth: { type: 'string' }
+    //         }
+    //     }
+    // }
   },
   //   apis: ['./routes/**/*.js']
   apis: ['./routes/api/*.js'] // api 파일 위치들

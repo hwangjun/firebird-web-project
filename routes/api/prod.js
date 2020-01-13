@@ -1,7 +1,7 @@
 const express = require('express');
 const router = express.Router();
 const {check, validationResult} = require('express-validator');
-const Prod = require('../../models/ProductModel');
+const Prod = require('../../models/product/Product');
 
 /**
  * 상품 조회
@@ -20,7 +20,7 @@ router.get('/:prod_c', check('prod_c').isNumeric(),(req, res) => {
         responseResult.desc = validationError.errors[0].msg + '[' + validationError.errors[0].param + ']';
     }
     if (400 != responseResult.state) {
-        Prod.getProduct(req.params.prod_c)
+        Prod.findByProductCode(req.params.prod_c)
             .then((result) => {
                 responseResult.result = result;
             })
@@ -53,7 +53,7 @@ router.get('/', (req, res) => {
         query.prod_n = prod_n
     }
 
-    Prod.getProductList(query, skip, limit)
+    Prod.findAll(query, skip, limit)
         .then((r) => {
             responseResult.result = r;
         })
@@ -91,7 +91,7 @@ router.post('/', [check('prod_c').isInt(), check('prod_n').isString()]
             prod_n: req.query.prod_n
         };
 
-        Prod.addProduct(newProd).then((r) => {
+        Prod.create(newProd).then((r) => {
             responseResult.result = r;
         }).catch((err) => {
             console.error('product Add Error : ', err);
@@ -124,7 +124,7 @@ router.delete('/:prod_c', check('prod_c').isInt(), (req, res) => {
     };
 
     if (400 != responseResult.state) {
-    Prod.deleteProduct(req.params.prod_c)
+    Prod.delete(req.params.prod_c)
         .then((r) => {
             responseResult.result = r;
         })

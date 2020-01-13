@@ -2,10 +2,8 @@ const passportJWT = require('passport-jwt');
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
 const LocalStrategy = require('passport-local').Strategy; 
-const User = require('../models/UserModel'); 
+const User = require('../models/user/User'); 
 const mongoose = require('mongoose');
-require('dotenv').config();
-
    
 module.exports = (passport) => { // index.js에서 넘겨준 passport입니다.
   let opts = {};
@@ -34,7 +32,7 @@ module.exports = (passport) => { // index.js에서 넘겨준 passport입니다.
              
         const newUser = new User();
         newUser.email = email; // 넘겨받은 정보들을 세팅합니다.
-        newUser.password = newUser.generateHash(password); // generateHash을 통해 비밀번호를 hash화 합니다.
+        newUser.password = User.generateHash(password); // generateHash을 통해 비밀번호를 hash화 합니다.
         newUser.name = req.body.name;
   
         newUser.save(function (err) { // 저장합니다.
@@ -57,7 +55,7 @@ module.exports = (passport) => { // index.js에서 넘겨준 passport입니다.
             //return done(null, false, req.flash('signinMessage', '아이디가 존재하지 않습니다.'));
             return done(null, false);
         } else {  
-          user.comparePassword(password, user.password, (err, isMatch) => {
+          User.comparePassword(password, user.password, (err, isMatch) => {
             if (isMatch && !err) {
               return done(null, user);
             } else {

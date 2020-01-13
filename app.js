@@ -40,7 +40,6 @@ switch(process.env.NODE_ENV) {
     envPath = './local.env';
 }
 dotenv.config({path: envPath});
-console.log(`path ${envPath}`)
 
 // SWAGGER
 const swaggerJSDoc = require('swagger-jsdoc');
@@ -72,8 +71,6 @@ app.use(session({
 
 app.use(flash());
 
-//app.set('jwt-secret', config.secret);
-
 require('./config/passport')(passport);
 app.use(passport.initialize());
 app.use(passport.session());
@@ -81,18 +78,15 @@ app.use(helmet());
 
 app.use(cors());
 
-//인터셉터 역할 부여   
-app.use(function (req, res, next) {
-  // next(createError(403));
-  next();
-});
-
 // ROUTERS
 app.use('/', indexRouter);
 app.use('/api/auth',authRouter);
 app.use('/api/users', usersRouter);
 app.use('/products', prodRouter);
 app.use('/api/category', require('./routes/api/category'));
+app.use('/api/partner', require('./routes/api/partner'));
+
+// SWAGGER ROUTERS
 app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
 
 
@@ -111,7 +105,5 @@ app.use((err, req, res, next) => {
   res.status(err.status || 500);
   res.render('error');
 });
-
-
 
 module.exports = app;

@@ -8,7 +8,6 @@ const categorySchema = mongoose.Schema({
     depth: String
 });
 
-
 // Find All Category
 categorySchema.statics.findAll = function () {
   return this.find({});
@@ -19,11 +18,15 @@ categorySchema.statics.findByCategoryCode = function (categoryCode) {
   return this.find({ categoryCode });
 };
 
-
 // insert Category
 categorySchema.statics.create = function (payload) {
   const category = new this(payload);
   return category.save();
+};
+
+// update Category
+categorySchema.statics.update = function (payload) {
+  return this.updateOne({ categoryCode: payload.categoryCode }, { $set: payload });
 };
 
 // delete Category

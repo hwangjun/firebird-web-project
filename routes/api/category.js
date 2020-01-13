@@ -1,5 +1,5 @@
 const router = require('express').Router();
-const Category = require('../../models/CategoryModel');
+const Category = require('../../models/product/Category');
 
 /*
 options
@@ -97,7 +97,42 @@ router.post('/', (req, res) => {
         .then(category => res.send(category))
         .catch(err => res.status(500).send(err));
 });
-  
+
+
+/**
+*    @swagger
+*    /api/category:
+*    patch:
+*      summary: 카테고리 수정
+*      tags: [Category]
+*      consumes:
+*        - application/x-www-form-urlencoded
+*      parameters:
+*        - in: formData
+*          name: categoryCode
+*          type: string
+*          description: 카테고리 코드
+*        - in: formData
+*          name: parentCategoryCode
+*          type: string
+*          description: 부모 카테고리 코드
+*        - in: formData
+*          name: categoryName
+*          type: string
+*          description: 카레고리명
+*        - in: formData
+*          name: depth
+*          type: string
+*          description: 깊이
+*      responses:
+*        200:
+*          description: OK
+*/
+router.patch('/', (req, res) => {
+    Category.update(req.body)
+        .then(category => res.send(category))
+        .catch(err => res.status(500).send(err));
+});
 
 /**
 *    @swagger
