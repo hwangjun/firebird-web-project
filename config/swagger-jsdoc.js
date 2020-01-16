@@ -50,7 +50,7 @@ module.exports = {
           }
         },
         Forbidden: {
-          description: '권한이 없슴.',
+          description: '권한이 없음.',
           schema: {
             $ref: '#/components/errorResult/Error'
           }

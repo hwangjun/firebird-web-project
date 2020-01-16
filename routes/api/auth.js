@@ -96,6 +96,11 @@ router.use('/check', authMiddleware);
  *   get:
  *     summary: jwt 유효한지 확인
  *     tags: [Auth]
+ *     parameters:
+ *       - in: query
+ *         name: token
+ *         type: string
+ *         description: jwt toekn 
  *     responses:
  *       200:
  *         description: 성공
