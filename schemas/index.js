@@ -6,7 +6,7 @@ module.exports = () => {
             mongoose.set('debug', true);
         }
 
-        mongoose.connect(process.env.DB_HOST, { useNewUrlParser: true }
+        mongoose.connect(process.env.DB_HOST, { useNewUrlParser: true , useUnifiedTopology: true }
             , (error) => {
                 if (error) {
                     console.log('MongoDB Connection Error', error);

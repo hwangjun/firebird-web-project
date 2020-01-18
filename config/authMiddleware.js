@@ -1,5 +1,8 @@
 const jwt = require('jsonwebtoken');
-const authMiddleware = (req, res, next) => {
+const User = require('../models/user/User');
+const util = require('../common/util');
+
+const isLoggedin  = (req, res, next) => {
     // read the token from header or url 
     const token = req.headers['authorization'] || req.query.token
 
@@ -36,4 +39,20 @@ const authMiddleware = (req, res, next) => {
     }).catch(onError)
 }
 
-module.exports = authMiddleware;
+//관리자 권한 체크 추가 예정
+const checkPermission = (req, res, next) => {
+    User.findOne({ email: req.body.email }, (err, user) => {
+        if (err || !user) return res.json(util.successFalse(err));
+        else if (!req.decoded || user._id != req.decoded._id)
+            return res.json(util.successFalse(null, 'You don\'t have permission'));
+        else next();
+    });
+}
+
+
+
+module.exports = {
+    isLoggedin ,
+    checkPermission
+}
+

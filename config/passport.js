@@ -26,19 +26,25 @@ module.exports = (passport) => { // index.js에서 넘겨준 passport입니다.
       passReqToCallback: true  // request객체에 user의 데이터를 포함시킬지에 대한 여부를 결정
     }, (req, email, password, done) => {
       User.findOne({'email': email}, (err, user) => { // 넘겨받은 email을 통해 검색합니다.
-        if (err) return done(null);
-        // flash를 통해서 메세지를 넘겨줍니다.   
-        if (user) return done(null, false);
-             
-        const newUser = new User();
-        newUser.email = email; // 넘겨받은 정보들을 세팅합니다.
-        newUser.password = User.generateHash(password); // generateHash을 통해 비밀번호를 hash화 합니다.
-        newUser.name = req.body.name;
-  
-        newUser.save(function (err) { // 저장합니다.
-          if (err) throw err;
-          return done(null, newUser); // serializeUser에 값을 넘겨줍니다.
-        });
+        try {
+          if (err) return done(err);
+          // flash를 통해서 메세지를 넘겨줍니다.   
+          if (user) return done(null, false);
+
+          const newUser = new User();
+          newUser.email = email; // 넘겨받은 정보들을 세팅합니다.
+          newUser.password = password; // generateHash을 통해 비밀번호를 hash화 합니다.
+          newUser.name = req.body.name;
+          newUser.passwordConfirmation = req.body.passwordConfirmation; //비밀번호확인값
+
+          newUser.save((err) => { // 저장합니다.
+            if (err) return done(err);
+            return done(null, newUser); // serializeUser에 값을 넘겨줍니다.
+          });
+        } catch (err) {
+          console.log(err);
+          done(err);
+        }
       })
     }));
 
@@ -89,9 +95,5 @@ module.exports = (passport) => { // index.js에서 넘겨준 passport입니다.
         console.log(err);
         done(err);
       }
-    }));
-    
-    
-    
-    
+    })); 
 };  

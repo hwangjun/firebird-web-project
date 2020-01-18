@@ -22,7 +22,7 @@ responses
 
 /**
  * @swagger
- * /api/users/:
+ * /api/users:
  *   get:
  *     summary: 모든 회원 조회
  *     tags: [User]
@@ -30,7 +30,7 @@ responses
  *       200:
  *         description: 성공
  */
-router.get('/', authMiddleWare, (req, res) => {
+router.get('/', authMiddleWare.isLoggedin, (req, res) => {
     User.findAll().then((user) => {
         if (!user.length) return res.status(404).json({ err: 'User not found' });
         res.json(user);
@@ -43,18 +43,19 @@ router.get('/', authMiddleWare, (req, res) => {
  *   get:
  *     summary: 특정 회원 조회
  *     tags: [User]
+ *     consumes:
+ *       - application/json 
  *     parameters:
  *       - in: path
  *         name: email
  *         type: string
  *         required: true
- *         description: |
- *          이메일
+ *         description: 이메일
  *     responses:
  *       200:
  *         description: 성공
  */
-router.get('/:email', authMiddleWare, (req, res) => {
+router.get('/:email', authMiddleWare.isLoggedin, (req, res) => {
     User.findByUserEamil(req.params.email).then((user) => {
         if (!user) return res.status(404).json({ err: 'User not found' });
         res.json(user);
@@ -71,23 +72,33 @@ router.get('/:email', authMiddleWare, (req, res) => {
 *      consumes:
 *        - application/json
 *      parameters:
-*        - in: formData
-*          name: email
-*          type: string
-*          description: 이메일
-*        - in: formData
-*          name: password
-*          type: string
-*          description: 비밀번호
-*        - in: formData
-*          name: name
-*          type: string
-*          description: 이름
+*        - name: body
+*          in: body
+*          required: true
+*          schema:
+*            type: object
+*            required: [email, password, passwordConfirmation, name]
+*            properties:
+*              email:
+*                type: string
+*                format: email
+*                description: 이메일
+*              password:
+*                type: string
+*                format: password
+*                description: 비밀번호
+*              passwordConfirmation:
+*                type: string
+*                format: password
+*                description: 비밀번호확인
+*              name:
+*                type: string
+*                description: 이름
 *      responses:
 *        200:
 *          description: OK
 */
-router.post('/', authMiddleWare, (req, res) => {
+router.post('/', authMiddleWare.isLoggedin, (req, res) => {
     User.create(req.body)
         .then(user => res.json(user))
         .catch(err => res.status(500).json(err));
@@ -103,23 +114,29 @@ router.post('/', authMiddleWare, (req, res) => {
 *      consumes:
 *        - application/json
 *      parameters:
-*        - in: formData
-*          name: email
-*          type: string
-*          description: 이메일
-*        - in: formData
-*          name: password
-*          type: string
-*          description: 비밀번호
-*        - in: formData
-*          name: name
-*          type: string
-*          description: 이름
+*        - name: body
+*          in: body
+*          required: true
+*          schema:
+*            type: object
+*            required: [email, password, name]
+*            properties:
+*              email:
+*                type: string
+*                format: email
+*                description: 이메일
+*              password:
+*                type: string
+*                format: password
+*                description: 비밀번호
+*              name:
+*                type: string
+*                description: 이름
 *      responses:
 *        200:
 *          description: OK
 */
-router.patch('/', authMiddleWare, (req, res) => {
+router.patch('/', authMiddleWare.isLoggedin, authMiddleWare.checkPermission, (req, res) => {
     User.update(req.body)
         .then(user => res.json(user))
         .catch(err => res.status(500).json(err));
@@ -127,22 +144,29 @@ router.patch('/', authMiddleWare, (req, res) => {
 
 /**
 *    @swagger
-*    /api/users:
+*    /api/users/{email}:
 *    delete:
 *      summary: 회원 제거
 *      tags: [User]
 *      consumes:
 *        - application/json
 *      parameters:
-*        - in: formData
-*          name: email
-*          type: string
-*          description: 이메일
+*        - name: body
+*          in: body
+*          required: true
+*          schema:
+*            type: object
+*            required: [email]
+*            properties:
+*              email:
+*                 type: string
+*                 format: email
+*                 description: 이메일
 *      responses:
 *        200:
 *          description: OK
 */
-router.delete('/', authMiddleWare, (req, res) => {
+router.delete('/:email', authMiddleWare.isLoggedin, authMiddleWare.checkPermission, (req, res) => {
     User.delete(req.body.email)
         .then(user => res.json(user))
         .catch(err => res.status(500).json(err));

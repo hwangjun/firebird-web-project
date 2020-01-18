@@ -59,7 +59,6 @@ router.get('/logout', (req, res) => {
 router.get('/users', passport.authenticate('jwt', { session: false }), (req, res) => {
   const token = getToken(req.headers);
   if(token) {
-      //console.log("req",req);
       const user = req.user;
       res.json({ success : true, user});
   } else { 
