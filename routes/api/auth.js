@@ -3,6 +3,7 @@ const router = express.Router();
 const passport = require('passport');
 const jwt = require('jsonwebtoken');
 const authMiddleware = require('../../config/authMiddleware');
+const util = require('../../common/util');
 
  /**
  * @swagger
@@ -10,17 +11,24 @@ const authMiddleware = require('../../config/authMiddleware');
  *   post:
  *     summary: 로그인.
  *     tags: [Auth]
+ *     consumes:
+ *       - application/json
  *     parameters:
- *       - in: formData
- *         name: email
- *         type: string
- *         description: 이메일
+ *       - name: body
+ *         in: body
  *         required: true
- *       - in: formData
- *         name: password
- *         type: string
- *         description: 비밀번호
- *         required: true
+ *         schema:
+ *           type: object
+ *           required: [email, password]
+ *           properties:
+ *             email:
+ *               type: string
+ *               format: email
+ *               description: Email
+ *             password:
+ *               type: string
+ *               format: password
+ *               description: password
  *     responses:
  *       200:
  *         description: 성공
@@ -33,14 +41,20 @@ const authMiddleware = require('../../config/authMiddleware');
  */
 router.post('/login', (req, res, next) => {
     passport.authenticate('local-signin', (err, user) => {
-        if (err) { return next(err); }
-        if (!user) { return res.json({ success: "false", msg: 'User not found or Wrong password.' }); }
+        // if (err) { return next(err); }
+        // if (!user) { return res.json({ success: "false", msg: 'User not found or Wrong password.' }); }
+        if (err || !user) return res.json(util.successFalse(err, 'User not found or Wrong password.'));
         req.logIn(user, (err) => {
-            if (err) { return next(err); }
+            if (err) return  res.json(util.successFalse(err, 'Login failed'));
             const token = jwt.sign(req.user.toJSON(), process.env.JWT_SECRET, {
-                expiresIn: 604800 // 1 week
+                expiresIn: 60*60*24 //604800  1 week
+            },(err, token) => {
+                if(err) return res.json(util.successFalse(err));
+                const data = util.successTrue(user,'Login Success.');
+                data.token = token;
+                return res.json(data);
             });
-            return res.json({ success: "true", user, token: 'JWT ' + token, msg: 'Login Success.' });
+            //return res.json({ success: "true", user, token: 'JWT ' + token, msg: 'Login Success.' });
         });
     })(req, res, next);
 });
@@ -51,22 +65,31 @@ router.post('/login', (req, res, next) => {
  *   post:
  *     summary: 회원가입.
  *     tags: [Auth]
+ *     consumes:
+ *       - application/json
  *     parameters:
- *       - in: formData
- *         name: email
- *         type: string
- *         description: 이메일
+ *       - name: body
+ *         in: body
  *         required: true
- *       - in: formData
- *         name: password
- *         type: string
- *         description: 비밀번호
- *         required: true
- *       - in: formData
- *         name: name
- *         type: string
- *         description: 이름
- *         required: true
+ *         schema:
+ *           type: object
+ *           required: [email, password, passwordConfirmation, name]
+ *           properties:
+ *             email:
+ *               type: string
+ *               format: email
+ *               description: 이메일
+ *             password:
+ *               type: string
+ *               format: password
+ *               description: 비밀번호
+ *             passwordConfirmation:
+ *               type: string
+ *               format: password
+ *               description: 비밀번호확인
+ *             name:
+ *               type: string
+ *               description: 이름 
  *     responses:
  *       200:
  *         description: 성공
@@ -79,17 +102,20 @@ router.post('/login', (req, res, next) => {
  */
 router.post('/register', (req, res, next) => {
     passport.authenticate('local-signup', (err, user) => {
-        if (err) { return next(err); }
-        if (user) { //newUser 반환
-            return res.json({ success: "true", user, msg: 'User register Success.' });
-        } else { //false 반환
-            return res.json({ success: "false", "email": req.body.email, msg: 'User is found.' });
-        }
+        // if (err) { return next(err); }
+        // if (user) { //newUser 반환
+        //     return res.json({ success: "true", user, msg: 'User register Success.' });
+        // } else { //false 반환
+        //     return res.json({ success: "false", "email": req.body.email, msg: 'User is found.' });
+        // })
+        if (err) return res.json(util.successFalse(err));
+        if (!user) { return res.json(util.successFalse(err, 'User is found.')) }
+        else { return res.json(util.successTrue(user, 'User register Success.')) };
     })(req, res, next);
 });
 
 
-router.use('/check', authMiddleware);
+router.use('/check', authMiddleware.isLoggedin);
  /**
  * @swagger
  * /api/auth/check:
