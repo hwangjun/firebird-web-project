@@ -5,6 +5,15 @@ import mongoose from "mongoose";
 import bcrypt from "bcrypt-nodejs";
 
 
+/**
+ *  9999 : Admin
+ *  0000 : Unauthenticated user 
+ *  1111 : Authenticated user
+ *  2222 : Partner
+ */
+
+
+
 // 스키마 설정
 const userSchema = mongoose.Schema({
   name :  {          // 이름
@@ -21,28 +30,40 @@ const userSchema = mongoose.Schema({
     type:String,
     required:[true,'Password is required!'],
     //select:false
-  }
+  },
+  role: {
+    roleCode  : {
+      type : String,
+      default : '0000'
+      
+    },
+    roleName : {           
+      type : String,
+      default : 'Unauthenticated'
+    }  
+  },
 },{
     toObject:{virtuals:false}
     
 });
 
+
 // virtuals
 userSchema.virtual('passwordConfirmation')
-  .get(() => { return this._passwordConfirmation; })
-  .set((value) => { this._passwordConfirmation = value; });
+  .get(function() { return this._passwordConfirmation; })
+  .set(function(value) { this._passwordConfirmation = value; });
 
 userSchema.virtual('originalPassword')
-  .get(() => { return this._originalPassword; })
-  .set((value) => { this._originalPassword = value; });
+  .get(function() { return this._originalPassword; })
+  .set(function(value) { this._originalPassword = value; });
 
 userSchema.virtual('currentPassword')
-  .get(() => { return this._currentPassword; })
-  .set((value) => { this._currentPassword = value; });
+  .get(function() { return this._currentPassword; })
+  .set(function(value) { this._currentPassword = value; });
 
 userSchema.virtual('newPassword')
-  .get(() => { return this._newPassword; })
-  .set((value) => { this._newPassword = value; });
+  .get(function() { return this._newPassword; })
+  .set(function(value) { this._newPassword = value; });
 
 
 // password validation

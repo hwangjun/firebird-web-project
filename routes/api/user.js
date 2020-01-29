@@ -102,12 +102,12 @@ router.post('/', isLoggedin, (req, res) => {
 *      consumes:
 *        - application/json
 *      parameters:
-*        - name: body
+*        - name: User
 *          in: body
 *          required: true
 *          schema:
 *            type: object
-*            required: [email, password, name]
+*            required: [email, password, name, role.roleCode, role.roleName]
 *            properties:
 *              email:
 *                type: string
@@ -120,6 +120,15 @@ router.post('/', isLoggedin, (req, res) => {
 *              name:
 *                type: string
 *                description: 이름
+*              role:
+*                type: object
+*                properties:
+*                  roleCode:
+*                    type: string   
+*                    description: 권한코드
+*                  roleName:
+*                    type: string
+*                    description: 권한이름
 *      responses:
 *        200:
 *          description: OK

@@ -4,7 +4,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "node --no-warnings --experimental-modules --es-module-specifier-resolution=node ./bin/www"
+    "start": "nodemon --no-warnings --experimental-modules --es-module-specifier-resolution=node ./bin/www"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
