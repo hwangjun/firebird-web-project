@@ -1,11 +1,19 @@
-const passportJWT = require('passport-jwt');
+// const passportJWT = require('passport-jwt');
+// const JWTStrategy = passportJWT.Strategy;
+// const ExtractJWT = passportJWT.ExtractJwt;
+// const LocalStrategy = require('passport-local').Strategy; 
+// const User = require('../models/user/User'); 
+// const mongoose = require('mongoose');
+
+import passportJWT from "passport-jwt";
 const JWTStrategy = passportJWT.Strategy;
 const ExtractJWT = passportJWT.ExtractJwt;
-const LocalStrategy = require('passport-local').Strategy; 
-const User = require('../models/user/User'); 
-const mongoose = require('mongoose');
+import passportLocal from "passport-local";
+const LocalStrategy = passportLocal.Strategy;
+import User from "../models/user/User";
+import mongoose from "mongoose";
    
-module.exports = (passport) => { // index.js에서 넘겨준 passport입니다.
+export default(passport) => { // index.js에서 넘겨준 passport입니다.
   let opts = {};
   opts.jwtFromRequest = ExtractJWT.fromAuthHeaderWithScheme('jwt');
   opts.secretOrKey = process.env.JWT_SECRET;

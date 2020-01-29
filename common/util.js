@@ -34,4 +34,5 @@ util.parseError = (errors) => { //3
   return parsed;
 };
 
-module.exports = util;
+// module.exports = util;
+export default util;

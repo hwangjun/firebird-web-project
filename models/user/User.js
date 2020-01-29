@@ -1,6 +1,9 @@
      
-const mongoose = require('mongoose');
-const bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
+// const mongoose = require('mongoose');
+// const bcrypt = require('bcrypt-nodejs'); // 암호화를 위한 모듈
+import mongoose from "mongoose";
+import bcrypt from "bcrypt-nodejs";
+
 
 // 스키마 설정
 const userSchema = mongoose.Schema({
@@ -134,4 +137,5 @@ userSchema.pre('save', function (next) {  //es6 arrow function not working
 // })
 
 
-module.exports = mongoose.model('User', userSchema, 'TB_USER');
+// module.exports = mongoose.model('User', userSchema, 'TB_USER');
+export default mongoose.model('User', userSchema, 'TB_USER');

@@ -1,6 +1,6 @@
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
-module.exports = () => {
+export default () => {
     const connect = () => {
         if (process.env.NODE_ENV !== 'production') {
             mongoose.set('debug', true);

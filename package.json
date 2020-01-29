@@ -1,9 +1,10 @@
 {
   "name": "firebird-web-project",
+  "type": "module",
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "node --no-warnings --experimental-modules --es-module-specifier-resolution=node ./bin/www"
   },
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
@@ -28,6 +29,9 @@
     "express-validator": "6.3.1"
   },
   "devDependencies": {
+    "@babel/cli": "^7.8.3",
+    "@babel/core": "^7.8.3",
+    "@babel/preset-env": "^7.8.3",
     "swagger-jsdoc": "^3.5.0",
     "swagger-ui-express": "^4.1.2"
   }

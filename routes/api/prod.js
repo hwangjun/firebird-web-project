@@ -1,7 +1,14 @@
-const express = require('express');
+// const express = require('express');
+// const router = express.Router();
+// const {check, validationResult} = require('express-validator');
+// const Prod = require('../../models/product/Product');
+
+import express from "express";
 const router = express.Router();
-const {check, validationResult} = require('express-validator');
-const Prod = require('../../models/product/Product');
+import expressValidator from "express-validator";
+const check = expressValidator.check;
+const validationResult  = expressValidator.validationResult ;
+import Prod from "../../models/product/Product";
 
 /**
  * @swagger
@@ -190,4 +197,4 @@ router.delete('/:prod_c', check('prod_c').isInt(), (req, res) => {
     }
 })
 
-module.exports = router;
+export default router;

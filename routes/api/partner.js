@@ -1,5 +1,7 @@
-const router = require('express').Router();
-const Partner = require('../../models/product/Partner');
+// const router = require('express').Router();
+// const Partner = require('../../models/product/Partner');
+import express from "express";
+const router = express.Router();
 
 /**
  * @swagger
@@ -129,4 +131,5 @@ router.delete('/', (req, res) => {
         .catch(err => res.status(500).send(err));
 });
 
-module.exports = router;
+// module.exports = router;
+export default router;

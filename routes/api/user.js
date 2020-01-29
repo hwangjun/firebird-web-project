@@ -1,24 +1,12 @@
-const router = require('express').Router();
-const tokenConfig = require('../../config/token');
-const User = require('../../models/user/User');
-const authMiddleWare = require('../../config/authMiddleware');
+// const router = require('express').Router();
+// const tokenConfig = require('../../config/token');
+// const User = require('../../models/user/User');
+// const authMiddleWare = require('../../config/authMiddleware');
 
-/*
-options
-    enum: [cjung, gglee, etc..]
-
-
-responses
-    200:
-        description: 성공
-    403:
-        $ref: '#/components/res/Forbidden'
-    404:
-        $ref: '#/components/res/NotFound'
-    500:
-        $ref: '#/components/res/BadRequest'
-
-*/
+import express from "express";
+const router = express.Router();
+import User from "../../models/user/User";
+import {isLoggedin, checkPermission} from "../../config/authMiddleware";
 
 /**
  * @swagger
@@ -30,7 +18,7 @@ responses
  *       200:
  *         description: 성공
  */
-router.get('/', authMiddleWare.isLoggedin, (req, res) => {
+router.get('/', isLoggedin, (req, res) => {
     User.findAll().then((user) => {
         if (!user.length) return res.status(404).json({ err: 'User not found' });
         res.json(user);
@@ -55,7 +43,7 @@ router.get('/', authMiddleWare.isLoggedin, (req, res) => {
  *       200:
  *         description: 성공
  */
-router.get('/:email', authMiddleWare.isLoggedin, (req, res) => {
+router.get('/:email', isLoggedin, (req, res) => {
     User.findByUserEamil(req.params.email).then((user) => {
         if (!user) return res.status(404).json({ err: 'User not found' });
         res.json(user);
@@ -98,7 +86,7 @@ router.get('/:email', authMiddleWare.isLoggedin, (req, res) => {
 *        200:
 *          description: OK
 */
-router.post('/', authMiddleWare.isLoggedin, (req, res) => {
+router.post('/', isLoggedin, (req, res) => {
     User.create(req.body)
         .then(user => res.json(user))
         .catch(err => res.status(500).json(err));
@@ -136,7 +124,7 @@ router.post('/', authMiddleWare.isLoggedin, (req, res) => {
 *        200:
 *          description: OK
 */
-router.patch('/', authMiddleWare.isLoggedin, authMiddleWare.checkPermission, (req, res) => {
+router.patch('/', isLoggedin, checkPermission, (req, res) => {
     User.update(req.body)
         .then(user => res.json(user))
         .catch(err => res.status(500).json(err));
@@ -166,10 +154,11 @@ router.patch('/', authMiddleWare.isLoggedin, authMiddleWare.checkPermission, (re
 *        200:
 *          description: OK
 */
-router.delete('/:email', authMiddleWare.isLoggedin, authMiddleWare.checkPermission, (req, res) => {
+router.delete('/:email', isLoggedin, checkPermission, (req, res) => {
     User.delete(req.body.email)
         .then(user => res.json(user))
         .catch(err => res.status(500).json(err));
 });
 
-module.exports = router;
+// module.exports = router;
+export default router;

@@ -12,4 +12,5 @@ token.getToken = (headers) => {
     }
   };
 
-  module.exports = token;
+  // module.exports = token;
+  export default token;
