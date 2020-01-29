@@ -10,6 +10,7 @@ import cors from "cors";
 import dotenv from "dotenv";
 import flash from "connect-flash";
 import connect from "./schemas";
+import { fileURLToPath } from 'url';
 // const createError = require('http-errors');
 // const express = require('express');
 // const path = require('path');
@@ -57,14 +58,14 @@ import swaggerOption from "./config/swagger-jsdoc";
 import swaggerUi from "swagger-ui-express";
 const swaggerSpec = swaggerJSDoc(swaggerOption);
 
-const __dirname = path.dirname(new URL(import.meta.url).pathname);
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 connect();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
