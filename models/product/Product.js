@@ -4,39 +4,34 @@ let _this;
 
 // 상품 스키마
 const prodSchema = mongoose.Schema({
-    prod_c: {                           // 기준상품 코드
+    productCode: {
         type: Number,
         require: true,
-        unique: true
+        unique: true,
+        index: true
     },
-    prod_n: {                           // 기준상품명
+    productName: {
         type: String,
-        require: true
+        require: true,
+        trim: true
     },
-    minprice_q: {                       // 최저가
+    categoryCode: {
+        type: Number,
+        default: 0,
+        index: true
+    },
+    minPrice: {
         type: Number,
         default: 0
     },
-    avgprice_q: {                       // 평균가
+    avgPrice: {
         type: Number,
         default: 0
     },
-    make_d: {                           // 제조일
-        type: Date,
+    modifyDate: {
+        type: Date, 
         default: Date.now
-    },
-    input_d: {
-        type: Date,
-        default: Date.now
-    },
-    modify_d: {                         // 수정일
-        type: Date,
-        default: Date.now
-    },
-    shop_q: {
-        type: Number,
-        default: 0
-    },
+    }
 });
 
 // Find All Product
@@ -45,25 +40,25 @@ prodSchema.statics.findAll = (query, skip, limit) => {
 }
 
 // Find Product
-prodSchema.statics.findByProductCode = (prod_c) => {
-    return _this.find({ prod_c });
+prodSchema.statics.findByProductCode = (productCode) => {
+    return _this.find({ productCode });
 }
 
 // Insert Product
-prodSchema.statics.create = (prod) => {
-    const newProd = new _this(prod);
+prodSchema.statics.create = (payload) => {
+    const newProd = new _this(payload);
     return newProd.save();
 }
 
 // Update Category
 prodSchema.statics.update = (payload) => {
-    return _this.updateOne({ prod_c: payload.prod_c }, { $set: payload });
+    return _this.updateOne({ productCode: payload.productCode }, { $set: payload });
 };
 
 // Delete Product
-prodSchema.statics.delete = (prod_c) => {
-    return _this.remove({ prod_c });
+prodSchema.statics.delete = (productCode) => {
+    return _this.remove({ productCode });
 }
 
-_this = mongoose.model('Prod', prodSchema, 'TB_PROD');
+_this = mongoose.model('Prod', prodSchema, 'TB_PRODUCT');
 module.exports = _this;

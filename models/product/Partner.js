@@ -4,9 +4,17 @@ let _this;
 
 // 스키마 설정
 const partnerSchema = mongoose.Schema({
-  partnerCode: String,    // 협력사 코드(PK)
-  partnerName: String,    // 협력사명
-  companyName: String     // 회사이름
+  partnerCode: {
+    type: String,
+    require: true,
+    uppercase: true,
+    trim: true
+  },
+  partnerName: {
+    type: String,
+    require: true,
+    trim: true
+  }
 });
 
 // Find All Partner
@@ -34,5 +42,5 @@ partnerSchema.statics.update = (payload) => {
 partnerSchema.statics.delete = (partnerCode) => {
   return _this.remove({ partnerCode });
 };
-_this = mongoose.model('Partner', partnerSchema, 'TB_PARTNER_INFO');
+_this = mongoose.model('Partner', partnerSchema, 'TB_PARTNER');
 module.exports = _this;
