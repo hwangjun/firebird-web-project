@@ -10,7 +10,7 @@ import Prod from "../../models/product/Product";
 
 /**
  * @swagger
- * /api/products/:
+ * /api/products:
  *   get:
  *     summary: 모든 상품 조회
  *     tags: [Product]
