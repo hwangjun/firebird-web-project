@@ -3,10 +3,11 @@
 import express from "express";
 const router = express.Router();
 import Category from "../../models/product/Category";
+import {isLoggedin, checkAdminPermission} from "../../config/authMiddleware";
 
 /**
  * @swagger
- * /api/categorys/:
+ * /api/categorys:
  *   get:
  *     summary: 모든 카테고리 조회
  *     tags: [Category]
@@ -40,7 +41,7 @@ router.get('/', (req, res) => {
  *       200:
  *         description: 성공
  */
-router.get('/:categoryCode', (req, res) => {
+router.get('/:categoryCode', isLoggedin , checkAdminPermission, (req, res) => {
     Category.findByCategoryCode(req.params.categoryCode).then((category) => {
       if (!category) return res.status(404).send({ err: 'Category not found' });
         // res.send(`findByCategoryCode successfully: ${category}`);
@@ -78,7 +79,7 @@ router.get('/:categoryCode', (req, res) => {
 *        200:
 *          description: OK
 */
-router.post('/', (req, res) => {
+router.post('/', isLoggedin , checkAdminPermission, (req, res) => {
     Category.create(req.body)
         .then(category => res.send(category))
         .catch(err => res.status(500).send(err));
@@ -114,7 +115,7 @@ router.post('/', (req, res) => {
 *        200:
 *          description: OK
 */
-router.patch('/', (req, res) => {
+router.patch('/', isLoggedin , checkAdminPermission, (req, res) => {
     Category.update(req.body)
         .then(category => res.send(category))
         .catch(err => res.status(500).send(err));
@@ -137,7 +138,7 @@ router.patch('/', (req, res) => {
 *        200:
 *          description: OK
 */
-router.delete('/', (req, res) => {
+router.delete('/', isLoggedin , checkAdminPermission, (req, res) => {
     Category.delete(req.body.categoryCode)
         .then(category => res.send(category))
         .catch(err => res.status(500).send(err));

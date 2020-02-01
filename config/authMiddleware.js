@@ -4,6 +4,7 @@
 import jwt from "jsonwebtoken";
 import User from "../models/user/User";
 import util from "../common/util";
+import auth from "../common/auth";
 
 const isLoggedin  = (req, res, next) => {
     // read the token from header or url 
@@ -42,7 +43,6 @@ const isLoggedin  = (req, res, next) => {
     }).catch(onError)
 }
 
-//관리자 권한 체크 추가 예정
 const checkPermission = (req, res, next) => {
     User.findOne({ email: req.body.email }, (err, user) => {
         if (err || !user) return res.json(util.successFalse(err));
@@ -52,10 +52,20 @@ const checkPermission = (req, res, next) => {
     });
 }
 
-
+//관리자 권한 체크 
+const checkAdminPermission = (req, res, next) => {
+    User.findOne({ email: req.body.email }, (err, user) => {
+        console.log(user);
+        if (err || !user) return res.json(util.successFalse(err,'You don\'t have admin permission'));
+        else if (!req.decoded || user.role.roleName != auth.Admin)
+            return res.json(util.successFalse(null, 'You don\'t have admin permission'));
+        else next();
+    });
+}
 
 export {
     isLoggedin ,
-    checkPermission
+    checkPermission,
+    checkAdminPermission
 }
 

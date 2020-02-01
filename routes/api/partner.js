@@ -5,7 +5,7 @@ const router = express.Router();
 
 /**
  * @swagger
- * /api/partner/:
+ * /api/partner:
  *   get:
  *     summary: 모든 협력사 조회
  *     tags: [Partner]
