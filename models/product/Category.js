@@ -5,10 +5,15 @@ let _this;
 
 // 스키마 설정
 const categorySchema = mongoose.Schema({
-  categoryCode: String,         // 카테고리 코드(PK)
-  parentCategoryCode: String,   // 협력사 상품 코드 명
-  categoryName: String,         // 카테고리명
-  depth: String                 // 카테고리 깊이
+  categoryCode: {
+    type: Number,
+    require: true,
+  },
+  categoryName: {
+    type: String,
+    require: true,
+    trim: true
+  }
 });
 
 // Find All Category
