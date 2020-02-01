@@ -5,9 +5,7 @@
 
 import express from "express";
 const router = express.Router();
-import expressValidator from "express-validator";
-const check = expressValidator.check;
-const validationResult  = expressValidator.validationResult ;
+import Joi from "@hapi/joi";
 import Prod from "../../models/product/Product";
 
 /**
@@ -23,30 +21,48 @@ import Prod from "../../models/product/Product";
 router.get('/', (req, res) => {
     let responseResult = {
         state: 200,
-        desc: '',
+        message: '',
         result: null
     }
 
-    let prod_n = req.query.prod_n != null ? req.query.prod_n.trim() : null;
-    let skip = req.query.offset != null ? Number(req.query.offset) : 0;
-    let limit = req.query.limit != null ? Number(req.query.limit) : 10;
-    
-    let query = {};
-    if (null != prod_n && '' != prod_n) {
-        query.prod_n = prod_n
-    }
+    // validation 정의
+    const schema = Joi.object({
+        prodName: Joi.string(),
+        offset: Joi.number().default(0),
+        limit: Joi.number().default(10)
+    });
 
-    Prod.findAll(query, skip, limit)
-        .then((r) => {
-            responseResult.result = r;
-        })
-        .catch((err) => {
-            responseResult.state = 500;
-            responseResult.desc = 'productList Search FAIL';
-        })
-        .then(()=>{
-            res.status(responseResult.state).json(responseResult);
-        });
+    // 체크
+    const {error, value} = schema.validate(req.query);
+    if (error) {
+        responseResult.state = 400;
+        responseResult.message = error;
+    }
+    
+    if (200 == responseResult.state) {
+        let query = {};
+        let skip = value.offset;
+        let limit = value.limit;
+
+        if (value.prodName) {
+            // like
+            query['productName'] = { $regex: '.*' + value.prodName + '.*' }
+        }
+        
+        Prod.findAll(query, skip, limit)
+            .then((r) => {
+                responseResult.result = r;
+            })
+            .catch((err) => {
+                responseResult.state = 500;
+                responseResult.message = 'productList Search FAIL';
+            })
+            .then(() => {
+                res.status(responseResult.state).json(responseResult);
+            });
+    } else {
+        res.status(responseResult.state).json(responseResult);
+    }
 });
 
 /**
@@ -65,21 +81,27 @@ router.get('/', (req, res) => {
  *       200:
  *         description: 성공
  */
-router.get('/:prod_c', check('prod_c').isNumeric(),(req, res) => {
+router.get('/:productCode', (req, res) => {
     let responseResult = {
         state: 200,
-        desc: '',
+        message: '',
         result: null
     }
 
-    const validationError = validationResult(req);
-    // 유효성 검사 통과 못할 경우 false
-    if (false == validationError.isEmpty()) {
+    // validation 정의
+    const schema = Joi.object({
+        productCode: Joi.number()
+    });
+
+    // 체크
+    const {error, value} = schema.validate(req.params);
+    if (error) {
         responseResult.state = 400;
-        responseResult.desc = validationError.errors[0].msg + '[' + validationError.errors[0].param + ']';
+        responseResult.message = error;
     }
-    if (400 != responseResult.state) {
-        Prod.findByProductCode(req.params.prod_c)
+
+    if (200 == responseResult.state) {
+        Prod.findByProductCode(value.productCode)
             .then((result) => {
                 responseResult.result = result;
             })
@@ -90,6 +112,8 @@ router.get('/:prod_c', check('prod_c').isNumeric(),(req, res) => {
             .then(()=>{
                 res.status(responseResult.state).json(responseResult);
             });
+    } else {
+        res.status(responseResult.state).json(responseResult);
     }
 });
 
@@ -114,26 +138,32 @@ router.get('/:prod_c', check('prod_c').isNumeric(),(req, res) => {
 *        200:
 *          description: OK
 */
-router.post('/', [check('prod_c').isInt(), check('prod_n').isString()]
-            , (req, res, next) => {
+router.post('/', (req, res, next) => {
     let responseResult = {
         state: 200,
-        desc: '',
+        message: '',
         result: null
     }
 
-    const validationError = validationResult(req);
-    // 유효성 검사 통과 못할 경우 false
-    if (false == validationError.isEmpty()) {
+    // validation 정의
+    const schema = Joi.object({
+        //productCode: Joi.number().required(),
+        productName: Joi.string().required(),
+        categoryCode: Joi.number().required()
+    });
+
+    // validation 체크
+    const {error, value} = schema.validate(req.body);
+    if (null != error) {
         responseResult.state = 400;
-        responseResult.desc = validationError.errors[0].msg + '[' + validationError.errors[0].param + ']';
-        res.status(responseResult.state).json(responseResult);
+        responseResult.message = error;
     }
 
-    if (400 != responseResult.state) {
+    if (200 == responseResult.state) {
         let newProd = {
-            prod_c: req.query.prod_c,
-            prod_n: req.query.prod_n
+            //productCode: value.productCode,
+            productName: value.productName,
+            categoryCode: value.categoryCode
         };
 
         Prod.create(newProd).then((r) => {
@@ -141,11 +171,13 @@ router.post('/', [check('prod_c').isInt(), check('prod_n').isString()]
         }).catch((err) => {
             console.error('product Add Error : ', err);
             responseResult.state = 500;
-            responseResult.desc = 'product Add FAIL';
+            responseResult.message = 'product Add FAIL';
         })
         .then(()=>{
             res.status(responseResult.state).json(responseResult);
         });
+    } else {
+        res.status(responseResult.state).json(responseResult);
     }
 });
 
@@ -166,34 +198,39 @@ router.post('/', [check('prod_c').isInt(), check('prod_n').isString()]
 *        200:
 *          description: OK
 */
-router.delete('/:prod_c', check('prod_c').isInt(), (req, res) => {
+router.delete('/:productCode', (req, res) => {
     let responseResult = {
         state: 200,
-        desc: '',
+        message: '',
         result: null
     }
 
-    const validationError = validationResult(req);
-     // 유효성 검사 통과 못할 경우 false
-    if (false == validationError.isEmpty()) {
-        console.log('validator fasle :' , validationError);
-        responseResult.state = 400;
-        responseResult.desc = validationError.errors[0].msg + '[' + validationError.errors[0].param + ']';
-        res.status(responseResult.state).json(responseResult);
-    };
+    // validation 정의
+    const schema = Joi.object({
+        productCode: Joi.number()
+    });
 
-    if (400 != responseResult.state) {
-    Prod.delete(req.params.prod_c)
+    // 체크
+    const {error, value} = schema.validate(req.params);
+    if (null != error) {
+        responseResult.state = 400;
+        responseResult.message = error;
+    }
+
+    if (200 == responseResult.state) {
+    Prod.delete(value.productCode)
         .then((r) => {
             responseResult.result = r;
         })
         .catch((err) => {
             responseResult.state = 500;
-            responseResult.desc = 'product DELETE FAIL';
+            responseResult.message = 'product DELETE FAIL';
         })
         .then(() => {
             res.status(responseResult.state).json(responseResult);
         })
+    } else {
+        res.status(responseResult.state).json(responseResult);
     }
 })
 
