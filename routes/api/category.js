@@ -1,22 +1,8 @@
-const router = require('express').Router();
-const Category = require('../../models/product/Category');
-
-/*
-options
-    enum: [cjung, gglee, etc..]
-
-
-responses
-    200:
-        description: 성공
-    403:
-        $ref: '#/components/res/Forbidden'
-    404:
-        $ref: '#/components/res/NotFound'
-    500:
-        $ref: '#/components/res/BadRequest'
-
-*/
+// const router = require('express').Router();
+// const Category = require('../../models/product/Category');
+import express from "express";
+const router = express.Router();
+import Category from "../../models/product/Category";
 
 /**
  * @swagger
@@ -157,4 +143,5 @@ router.delete('/', (req, res) => {
         .catch(err => res.status(500).send(err));
 });
 
-module.exports = router;
+// module.exports = router;
+export default router;

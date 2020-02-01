@@ -1,7 +1,26 @@
-const express = require('express');
+// const express = require('express');
+// const router = express.Router();
+// const passport = require('passport');
+// const jwt = require('jsonwebtoken');
+
+import express from "express";
 const router = express.Router();
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
+import passport from "passport";
+import jwt from "jsonwebtoken";
+
+
+const getToken = (headers) => {
+  if (headers && headers.authorization) {
+    const parted = headers.authorization.split(' ');
+    if (parted.length === 2) {
+      return parted[1];
+    } else {
+      return null;
+    }
+  } else {
+    return null;
+  }
+};
 
 /* GET home page. */
 router.get('/', (req, res, next) => {
@@ -66,21 +85,5 @@ router.get('/users', passport.authenticate('jwt', { session: false }), (req, res
   }
 });
 
-
-getToken = (headers) => {
-  if (headers && headers.authorization) {
-    const parted = headers.authorization.split(' ');
-    if (parted.length === 2) {
-      return parted[1];
-    } else {
-      return null;
-    }
-  } else {
-    return null;
-  }
-};
-
-
-
-
-module.exports = router;
+// module.exports = router;
+export default router;

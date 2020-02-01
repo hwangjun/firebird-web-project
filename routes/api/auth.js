@@ -1,9 +1,18 @@
-const express = require('express');
+// const express = require('express');
+// const router = express.Router();
+// const passport = require('passport');
+// const jwt = require('jsonwebtoken');
+// const authMiddleware = require('../../config/authMiddleware');
+// const util = require('../../common/util');
+
+
+import express from "express";
 const router = express.Router();
-const passport = require('passport');
-const jwt = require('jsonwebtoken');
-const authMiddleware = require('../../config/authMiddleware');
-const util = require('../../common/util');
+import passport from "passport";
+import jwt from "jsonwebtoken";
+import {isLoggedin} from '../../config/authMiddleware';
+
+import util from "../../common/util";
 
  /**
  * @swagger
@@ -115,7 +124,7 @@ router.post('/register', (req, res, next) => {
 });
 
 
-router.use('/check', authMiddleware.isLoggedin);
+router.use('/check', isLoggedin);
  /**
  * @swagger
  * /api/auth/check:
@@ -141,4 +150,5 @@ router.get('/check', (req, res) => {
     res.json({ success: "true", info: req.decoded });
 });
 
-module.exports = router;
+// module.exports = router;
+export default router;

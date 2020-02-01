@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 let _this;
 
@@ -42,5 +43,6 @@ partnerSchema.statics.update = (payload) => {
 partnerSchema.statics.delete = (partnerCode) => {
   return _this.remove({ partnerCode });
 };
+
 _this = mongoose.model('Partner', partnerSchema, 'TB_PARTNER');
-module.exports = _this;
+export default _this;

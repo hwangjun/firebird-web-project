@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
+import mongoose from "mongoose"; 
 
 let _this;
 
@@ -61,4 +62,4 @@ prodSchema.statics.delete = (productCode) => {
 }
 
 _this = mongoose.model('Prod', prodSchema, 'TB_PRODUCT');
-module.exports = _this;
+export default _this;

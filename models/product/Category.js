@@ -1,4 +1,5 @@
-const mongoose = require('mongoose');
+// const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
 let _this;
 
@@ -42,4 +43,5 @@ categorySchema.statics.delete = (categoryCode) => {
 };
 _this = mongoose.model('Category', categorySchema, 'TB_CATEGORY');
 
-module.exports = _this; 
+// module.exports = _this; 
+export default _this;

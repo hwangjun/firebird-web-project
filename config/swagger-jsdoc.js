@@ -15,7 +15,7 @@
 
 'use strict';
 
-module.exports = {
+export default {
   swaggerDefinition: {
     // 정보
     info: {

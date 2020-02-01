@@ -1,6 +1,9 @@
-const jwt = require('jsonwebtoken');
-const User = require('../models/user/User');
-const util = require('../common/util');
+// const jwt = require('jsonwebtoken');
+// const User = require('../models/user/User');
+// const util = require('../common/util');
+import jwt from "jsonwebtoken";
+import User from "../models/user/User";
+import util from "../common/util";
 
 const isLoggedin  = (req, res, next) => {
     // read the token from header or url 
@@ -51,7 +54,7 @@ const checkPermission = (req, res, next) => {
 
 
 
-module.exports = {
+export {
     isLoggedin ,
     checkPermission
 }

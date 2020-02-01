@@ -1,17 +1,30 @@
-const createError = require('http-errors');
-const express = require('express');
-const path = require('path');
-const cookieParser = require('cookie-parser');
-const passport = require('passport');
-const morgan = require('morgan'); 
-const session = require('express-session');
-const helmet = require('helmet');
-const flash = require('connect-flash');
-const cors = require('cors');
+import createError from "http-errors";
+import express from "express";
+import path from "path";
+import cookieParser from "cookie-parser";
+import passport from "passport";
+import morgan from "morgan";
+import session from "express-session";
+import helmet from "helmet";
+import cors from "cors";
+import dotenv from "dotenv";
+import flash from "connect-flash";
+import connect from "./schemas";
+import { fileURLToPath } from 'url';
+// const createError = require('http-errors');
+// const express = require('express');
+// const path = require('path');
+// const cookieParser = require('cookie-parser');
+// const passport = require('passport');
+// const morgan = require('morgan'); 
+// const session = require('express-session');
+// const helmet = require('helmet');
+// const flash = require('connect-flash');
+// const cors = require('cors');
 //require('dotenv').config();
-const dotenv = require('dotenv');
-const connect = require('./schemas');
-const app = express();
+// const dotenv = require('dotenv');
+// const connect = require('./schemas');
+ const app = express();
 
 
 /**
@@ -36,18 +49,23 @@ switch(process.env.NODE_ENV) {
 dotenv.config({path: envPath});
 
 // SWAGGER
-const swaggerJSDoc = require('swagger-jsdoc');
-const swaggerOption = require('./config/swagger-jsdoc');
+// const swaggerJSDoc = require('swagger-jsdoc');
+// const swaggerOption = require('./config/swagger-jsdoc');
+// const swaggerSpec = swaggerJSDoc(swaggerOption);
+// const swaggerUi = require('swagger-ui-express');
+import swaggerJSDoc from "swagger-jsdoc";
+import swaggerOption from "./config/swagger-jsdoc";
+import swaggerUi from "swagger-ui-express";
 const swaggerSpec = swaggerJSDoc(swaggerOption);
-const swaggerUi = require('swagger-ui-express');
 
+const __filename = fileURLToPath(import.meta.url);
+const __dirname = path.dirname(__filename);
 
 connect();
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'ejs');
-
 app.use(morgan('dev'));
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.json());
@@ -65,20 +83,29 @@ app.use(session({
 
 app.use(flash());
 
-require('./config/passport')(passport);
+// require('./config/passport')(passport);
+import configPassport from "./config/passport";
+configPassport(passport);
 app.use(passport.initialize());
 app.use(passport.session());
 app.use(helmet());
 
 app.use(cors());
 
+import indexRouter from "./routes/index";
+import authRouter from "./routes/api/auth";
+import userRouter from "./routes/api/user";
+import productRouter from "./routes/api/prod";
+import categoryRouter from "./routes/api/category";
+import partnerRouter from "./routes/api/partner";
+
 // ROUTERS
-app.use('/', require('./routes/index'));
-app.use('/api/auth',require('./routes/api/auth'));
-app.use('/api/users', require('./routes/api/user'));
-app.use('/api/products', require('./routes/api/prod'));
-app.use('/api/categorys', require('./routes/api/category'));
-app.use('/api/partners', require('./routes/api/partner'));
+app.use('/', indexRouter);
+app.use('/api/auth',authRouter);
+app.use('/api/users', userRouter);
+app.use('/api/products', productRouter);
+app.use('/api/categorys', categoryRouter);
+app.use('/api/partners', partnerRouter);
 
 // SWAGGER ROUTERS
 app.use('/api-doc', swaggerUi.serve, swaggerUi.setup(swaggerSpec));
@@ -100,4 +127,4 @@ app.use((err, req, res, next) => {
   res.render('error');
 });
 
-module.exports = app;
+export default app;
