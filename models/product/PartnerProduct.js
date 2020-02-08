@@ -34,11 +34,13 @@ const partnerProductSchema = mongoose.Schema({
   },
   productURL: {
     type: String,
-    trim: true
+    trim: true,
+    default: ""
   },
   imageURL: {
     type: String,
-    trim: true
+    trim: true,
+    default: ""
   },
   price: {
     type: Number,
@@ -50,10 +52,22 @@ const partnerProductSchema = mongoose.Schema({
   }
 });
 
+partnerProductSchema.statics.findAll = (query, skip, limit) => {
+  return _this
+    .find(query)
+    .skip(skip)
+    .limit(limit);
+};
+
 // Insert Product
 partnerProductSchema.statics.create = payload => {
   const newProd = new _this(payload);
   return newProd.save();
+};
+
+// Delete Product
+partnerProductSchema.statics.delete = payload => {
+  return _this.remove({ payload });
 };
 
 _this = mongoose.model(
